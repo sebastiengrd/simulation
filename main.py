@@ -1,8 +1,7 @@
-import random
 
 
 class Simulation:
-	def __init__(self, initial_alt, initial_speed, time_steps, mass):
+	def __init__(self, initial_alt, initial_speed, time_steps, mass, interval_update_rocket):
 		self.initial_alt = initial_alt
 		self.initial_speed = initial_speed
 		self.time = 0
@@ -11,6 +10,10 @@ class Simulation:
 
 		self.alt = initial_alt
 		self.speed = initial_speed
+
+		self.max_alt = initial_alt
+		self.rocket = None
+		self.interval_update_rocket = interval_update_rocket
 
 	def update(self, forces):
 		
@@ -24,6 +27,12 @@ class Simulation:
 
 		self.time += self.time_steps
 
+		if self.max_alt < self.alt:
+			self.max_alt = self.alt
+
+		if self.time % self.interval_update_rocket < self.time_steps:
+			rocket.update()
+
 
 
 class Sensor:
@@ -33,10 +42,16 @@ class Sensor:
 	def get_value(self):
 		pass
 
+	def __repr__(self):
+		return "Default Sensor"
+
 
 class Time_Sensor(Sensor):
 	def get_value(self):
 		return self.simulation.time
+
+	def __repr__(self):
+		return "Time : {}".format(self.simulation.time)
 
 
 class Rocket:
@@ -47,14 +62,21 @@ class Rocket:
 
 	def show_status(self):
 		for sensor in self.sensors:
-			print(sensor.get_value())
+			print(sensor)
+
+	def update(self):
+		print("Rocket update") 
 
 
 
-s1 = Simulation(0, 9, 0.1, 1)
+s1 = Simulation(2, 244.4193118, 0.00001, 500, 0.0001)
 time_sensor = Time_Sensor(s1)
 rocket = Rocket(s1, time_sensor)
+s1.rocket = rocket
+
 
 while s1.alt >= 0:
-	s1.update([-9.8])
+	s1.update([-9.8*s1.mass])
 	rocket.show_status()
+
+print(f"max alt is {s1.max_alt}")
