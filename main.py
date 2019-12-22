@@ -54,29 +54,61 @@ class Time_Sensor(Sensor):
 		return "Time : {}".format(self.simulation.time)
 
 
+class Accelerometer_Sensor(Sensor):
+	def get_value(self):
+		return self.simulation.resulting_acc
+
+	def __repr__(self):
+		return "Acc : {}".format(self.simulation.resulting_acc)
+
+class Speed_Sensor(Sensor):
+	def get_value(self):
+		return self.simulation.speed
+
+	def __repr__(self):
+		return "Speed : {}".format(self.simulation.speed)
+
+class Alt_Sensor(Sensor):
+	def get_value(self):
+		return self.simulation.alt
+
+	def __repr__(self):
+		return "Alt : {}".format(self.simulation.alt)
+
 class Rocket:
-	def __init__(self, simulation, sensor_time):
+	def __init__(self, simulation, time_sensor, acc_sensor, speed_sensor, alt_sensor):
 		self.simulation = simulation
-		self.sensor_time = sensor_time
-		self.sensors = [self.sensor_time]
+		self.time_sensor = time_sensor
+		self.acc_sensor = acc_sensor
+		self.speed_sensor = speed_sensor
+		self.alt_sensor = alt_sensor
+		self.sensors = [self.time_sensor, self.acc_sensor, self.speed_sensor, self.alt_sensor]
 
 	def show_status(self):
+		print("----------------")
 		for sensor in self.sensors:
 			print(sensor)
 
 	def update(self):
-		print("Rocket update") 
+		pass
+		# print("Rocket update") 
 
 
-
+# goal is 3048m
 s1 = Simulation(2, 244.4193118, 0.00001, 500, 0.0001)
 time_sensor = Time_Sensor(s1)
-rocket = Rocket(s1, time_sensor)
+acc_sensor = Accelerometer_Sensor(s1)
+speed_sensor = Speed_Sensor(s1)
+alt_sensor = Alt_Sensor(s1)
+rocket = Rocket(s1, time_sensor, acc_sensor, speed_sensor, alt_sensor)
 s1.rocket = rocket
 
+count = 0
 
-while s1.alt >= 0:
+while s1.speed >= -5:
 	s1.update([-9.8*s1.mass])
-	rocket.show_status()
+	if count%100 == 0:
+		rocket.show_status()
+	count += 1
 
 print(f"max alt is {s1.max_alt}")
