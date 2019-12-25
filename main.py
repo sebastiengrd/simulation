@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 class Simulation:
 	def __init__(self, initial_alt, initial_speed, time_steps, mass, interval_update_rocket):
 		self.initial_alt = initial_alt
@@ -13,16 +15,26 @@ class Simulation:
 		self.rocket = None
 		self.interval_update_rocket = interval_update_rocket
 
+		self.speeds = []
+		self.alts = []
+		self.accs = []
+		self.times = []
+
+	def calcul_aero_force(self, c, p, u, a):
+		return 0.5*p*(u**2)*c*a
+
+
 	def run(self):
 		self.count = 0
 
 		while self.speed >= -5:
-			self.update([-9.8*s1.mass])
+			self.update([-9.8*s1.mass, self.calcul_aero_force(0.04, 1.268, self.speed, 0.0707)*-1])
 			if self.count%100000 == 0:
 				rocket.show_status()
 			self.count += 1
 
-		print(f"max alt is {s1.max_alt}")
+		print(f"max alt is {s1.max_alt} m and {s1.max_alt * 3.280839895} feets")
+		self.show_graphs()
 
 	def update(self, forces):
 		
@@ -41,6 +53,25 @@ class Simulation:
 
 		if self.time % self.interval_update_rocket < self.time_steps:
 			rocket.update()
+
+		self.alts.append(self.alt)
+		self.speeds.append(self.speed)
+		self.accs.append(self.resulting_acc)
+		self.times.append(self.time)
+ 
+	def show_graphs(self):
+		fig, axs = plt.subplots(3, sharex=True, sharey=False)
+		fig.suptitle('Rocket Status')
+		axs[0].set_title('Altitude (m)')
+		axs[1].set_title('Speed (m/s)')
+		axs[2].set_title('Acceleration (m/s^2)')
+		axs[0].plot(self.times, self.alts)
+		axs[1].plot(self.times, self.speeds)
+		axs[2].plot(self.times, self.accs)
+
+		axs[0].axhline(y=3048,linewidth=1, color='k')
+		plt.subplots_adjust(top=0.88, bottom=0.11, left=0.11, right=0.9, hspace=0.6, wspace=0.2)
+		plt.show()
 
 
 
@@ -92,15 +123,19 @@ class Rocket:
 		self.speed_sensor = speed_sensor
 		self.alt_sensor = alt_sensor
 		self.sensors = [self.time_sensor, self.acc_sensor, self.speed_sensor, self.alt_sensor]
+		self.coeff_drag = 0.04
+		self.coeff_drag_brakes = 0.1
 
 	def show_status(self):
 		print("----------------")
 		for sensor in self.sensors:
 			print(sensor)
 
+
+
 	def update(self):
 		pass
-		# print("Rocket update") 
+		
 
 
 
