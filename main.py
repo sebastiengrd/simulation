@@ -1,5 +1,3 @@
-
-
 class Simulation:
 	def __init__(self, initial_alt, initial_speed, time_steps, mass, interval_update_rocket):
 		self.initial_alt = initial_alt
@@ -14,6 +12,17 @@ class Simulation:
 		self.max_alt = initial_alt
 		self.rocket = None
 		self.interval_update_rocket = interval_update_rocket
+
+	def run(self):
+		self.count = 0
+
+		while self.speed >= -5:
+			self.update([-9.8*s1.mass])
+			if self.count%100000 == 0:
+				rocket.show_status()
+			self.count += 1
+
+		print(f"max alt is {s1.max_alt}")
 
 	def update(self, forces):
 		
@@ -94,21 +103,16 @@ class Rocket:
 		# print("Rocket update") 
 
 
-# goal is 3048m
-s1 = Simulation(2, 244.4193118, 0.00001, 500, 0.0001)
-time_sensor = Time_Sensor(s1)
-acc_sensor = Accelerometer_Sensor(s1)
-speed_sensor = Speed_Sensor(s1)
-alt_sensor = Alt_Sensor(s1)
-rocket = Rocket(s1, time_sensor, acc_sensor, speed_sensor, alt_sensor)
-s1.rocket = rocket
 
-count = 0
+if __name__ == '__main__':
+	# goal is 3048m
+	s1 = Simulation(2, 244.4193118, 0.00001, 500, 0.0001)
+	time_sensor = Time_Sensor(s1)
+	acc_sensor = Accelerometer_Sensor(s1)
+	speed_sensor = Speed_Sensor(s1)
+	alt_sensor = Alt_Sensor(s1)
+	rocket = Rocket(s1, time_sensor, acc_sensor, speed_sensor, alt_sensor)
+	s1.rocket = rocket
 
-while s1.speed >= -5:
-	s1.update([-9.8*s1.mass])
-	if count%100 == 0:
-		rocket.show_status()
-	count += 1
 
-print(f"max alt is {s1.max_alt}")
+	s1.run()
