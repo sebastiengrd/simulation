@@ -1,0 +1,3 @@
+Quick simulation that I made in Python to simulate the trajectory of a rocket that has brakes system into it to controll the ascent and to have an apogee of a specific value. The goal of this project is to come with an efficient solution to control the brakes even if the rocket is subject to random forces during the ascent and the values of the sensors are not exactly accurate.
+
+Even if the simulation is subject to many sources of error right now because it uses the Euler method to integrate, it is good enough for what I'm trying to do. Later on, I will try different algorithmes to controll the brakes and I will see the results with this simulation.
